@@ -2,10 +2,7 @@ from frappe.integrations.utils import make_get_request, make_post_request
 from frappe import session, log, db
 from datetime import date
 from typing import List, Dict
-
-manic_server = "192.168.56.101:8080"
-username = "erpbot@example.com"  # how to env
-password = "erpbot12"
+from manictime_integration.config.manictime import (manic_server, username, password)
 
 def get_activities_from_manictime(from_time: date, to_time: date) -> List[dict]:
         user = db.get_list("User", filters={'name': session.user}, fields=['*'])[0]
