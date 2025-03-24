@@ -14,7 +14,7 @@
   {
    "default": "http://192.168.56.105:8080/",
    "fieldname": "url",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Manictime Url",
    "reqd": 1
@@ -22,13 +22,13 @@
   {
    "default": "admin@example.com",
    "fieldname": "username",
-   "fieldtype": "Small Text",
+   "fieldtype": "Data",
    "label": "Manictime username"
   },
   {
    "default": "asdf1234",
    "fieldname": "password",
-   "fieldtype": "Password",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Manictime password",
    "reqd": 1
@@ -44,7 +44,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-03-24 14:44:47.517256",
+ "modified": "2025-03-24 15:04:51.074796",
  "modified_by": "Administrator",
  "module": "Manictime Integration",
  "name": "Manictime settings",
