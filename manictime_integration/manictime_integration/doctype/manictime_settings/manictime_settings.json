@@ -1,0 +1,67 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-24 11:53:21.222374",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "url",
+  "username",
+  "password",
+  "sync"
+ ],
+ "fields": [
+  {
+   "default": "http://192.168.56.105:8080/",
+   "fieldname": "url",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Manictime Url",
+   "reqd": 1
+  },
+  {
+   "default": "admin@example.com",
+   "fieldname": "username",
+   "fieldtype": "Small Text",
+   "label": "Manictime username"
+  },
+  {
+   "default": "asdf1234",
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "in_list_view": 1,
+   "label": "Manictime password",
+   "reqd": 1
+  },
+  {
+   "default": "01-01-1970 00:00:00",
+   "fieldname": "sync",
+   "fieldtype": "Datetime",
+   "label": "Last sync",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-03-24 11:57:54.118291",
+ "modified_by": "Administrator",
+ "module": "Manictime Integration",
+ "name": "Manictime settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

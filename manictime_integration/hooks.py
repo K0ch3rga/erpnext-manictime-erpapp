@@ -242,3 +242,8 @@ app_license = "mit"
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+website_route_rules = [
+    {"from_route": '/manictime/<path:name>', "to_route": 'homepage.html'},
+    {"from_route": '/manictime_integration', "to_route": 'homepage.html'},
+]
+

@@ -1,3 +1,7 @@
-manic_server = "192.168.56.101:8080"
-username = "erpbot@example.com"  # how to env
-password = "erpbot12"
+from frappe import get_doc
+
+config = get_doc('Manictime settings')
+
+manic_server = config.url
+username = config.username
+password = config.password
