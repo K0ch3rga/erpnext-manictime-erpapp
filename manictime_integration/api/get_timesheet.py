@@ -9,7 +9,7 @@ from frappe import (
 from frappe.integrations.utils import make_get_request, make_post_request
 from datetime import datetime
 from itertools import groupby
-from manictime_integration.config.manictime import (manic_server, username, password)
+from manictime_integration.config.manictime import manic_server, username, password
 
 
 def get_timesheets_from_manictime():
@@ -21,33 +21,29 @@ def get_timesheets_from_manictime():
 
     for timeline_group in timeline_groups:
         try:
-            employee = db.get_list('Employee', filters={'user_id': timeline_group[0]}) # user id is same as email
+            employee = db.get_list("Employee", filters={"user_id": timeline_group[0]})  # user id is same as email
         except Exception as e:
             log(e)
             continue
 
         for timeline in timeline_group[1]:
-            activities_endpoint = [
-                link["href"]
-                for link in timeline["links"]
-                if link["rel"] == "manictime/activities"
-            ][0] + f"?fromTime={sync}&toTime={now}"
+            activities_endpoint = [link["href"] for link in timeline["links"] if link["rel"] == "manictime/activities"][
+                0
+            ] + f"?fromTime={sync}&toTime={now}"
             activities = request_timeline_activities(token, activities_endpoint)
             for activity in activities:
                 try:
                     task_name = activity["task"]
                     task = get_last_doc("Task", filters={"subject": task_name})
                     project_name = activity["project"]
-                    project = get_last_doc(
-                        "Project", filters={"project_name": project_name}
-                    )
+                    project = get_last_doc("Project", filters={"project_name": project_name})
                     billable = False  # activity["billable"]
                 except Exception as e:
                     log(e)
 
                 activity_start = activity["activity_start"]
                 activity_end = activity["activity_end"]
-           
+
                 doc = get_doc(
                     {
                         "doctype": "Timesheet",
@@ -78,9 +74,7 @@ def authenticate_in_manictime() -> str:
         "Accept": "application/vnd.manictime.v3+json",
     }
 
-    token_response = make_post_request(
-        token_endpoint, data=auth_data, headers=auth_headers
-    )
+    token_response = make_post_request(token_endpoint, data=auth_data, headers=auth_headers)
     return token_response["token"]
 
 
@@ -96,10 +90,7 @@ def request_timelines_groupedby_employee(
     timeline_response = make_get_request(timeline_endpoint, headers=timeline_headers)
 
     timeline_groups = [
-        (i, list(d))
-        for i, d in groupby(
-            timeline_response["timelines"], lambda t: t["owner"]["username"]
-        )
+        (i, list(d)) for i, d in groupby(timeline_response["timelines"], lambda t: t["owner"]["username"])
     ]
 
     return timeline_groups
@@ -116,16 +107,18 @@ def request_timeline_activities(auth_token: str, url: str) -> List[dict]:
     activities = make_get_request(url, headers=activities_header)
     activities_list: List[dict] = []
     for activity in activities["entities"]:
-        if (activity["entityType"] == "activity") & ((name := activity["values"]["name"]) not in not_valid_activities) & (':erpnextimporter' in name):
+        if (
+            (activity["entityType"] == "activity")
+            & ((name := activity["values"]["name"]) not in not_valid_activities)
+            & (":erpnextimporter" in name)
+        ):
             tags = name.split(", ")
-            tags.remove(':erpnextimporter')
+            tags.remove(":erpnextimporter")
             billable = ":billable" in tags
             if billable:
                 tags.remove(":billable")
 
-            activity_start = datetime.fromisoformat(
-                activity["values"]["timeInterval"]["start"]
-            )
+            activity_start = datetime.fromisoformat(activity["values"]["timeInterval"]["start"])
             activity_end = utils.add_to_date(
                 activity_start,
                 seconds=activity["values"]["timeInterval"]["duration"],
