@@ -1,4 +1,4 @@
-from frappe import get_list, session, get_all, db, log
+from frappe import session, get_all, db
 from frappe.utils import add_to_date, today, date_diff
 from typing import Dict
 

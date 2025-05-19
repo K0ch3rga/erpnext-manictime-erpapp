@@ -1,11 +1,5 @@
 from frappe.integrations.utils import make_post_request, make_put_request
-from frappe import session, log, db
-from datetime import date
-from typing import List, Dict
-
-manic_server = "192.168.56.101:8080"
-username = "erpbot@example.com"  # how to env
-password = "erpbot12"
+from manictime_integration.config.manictime import (manic_server, username, password)
 
 def create_activity_in_manictime(timeline_id: str, create_activity_dto):
     token = authenticate_in_manictime()
@@ -17,7 +11,7 @@ def update_activity_in_manictime(timeline_id: str, create_activity_dto):
     
     
 def post_activity_in_manictime(token: str, timeline_id:str, new_activity_dto):   
-    post_activties_url = f"http://{manic_server}/api/timelines/{timeline_id}/activities"
+    post_activties_url = f"{manic_server}/api/timelines/{timeline_id}/activities"
     post_activities_headers = {
         "Content-Type": "application/vnd.manictime.v3+json; charset=utf-8 ",
         "Accept": "application/vnd.manictime.v3+json",
@@ -27,7 +21,7 @@ def post_activity_in_manictime(token: str, timeline_id:str, new_activity_dto):
     return activities_response # process response
     
 def put_activity_in_manictime(token: str, timeline_id:str, new_activity_dto):
-    put_activties_url = f"http://{manic_server}/api/timelines/{timeline_id}/activities"
+    put_activties_url = f"{manic_server}/api/timelines/{timeline_id}/activities"
     put_activities_headers = {
        "Content-Type": "application/vnd.manictime.v3+json; charset=utf-8 ",
        "Accept": "application/vnd.manictime.v3+json",

@@ -1,5 +1,5 @@
 from frappe.integrations.utils import make_get_request, make_post_request
-from frappe import session, log, db
+from frappe import session, db
 from datetime import date
 from typing import List, Dict
 from manictime_integration.config.manictime import (manic_server, username, password)
@@ -42,7 +42,7 @@ def get_activities_and_usage_from_manictime(from_time: date, to_time: date) -> D
         
         
 def get_activities_by_timeline(token: str, timeline_id:str, from_time:str, to_time:str):
-    get_activties_url = f"http://{manic_server}/api/timelines/{timeline_id}/activities?fromTime={from_time}&toTime={to_time}"
+    get_activties_url = f"{manic_server}/api/timelines/{timeline_id}/activities?fromTime={from_time}&toTime={to_time}"
     get_activities_headers = {
         "Content-Type": "application/vnd.manictime.v3+json; charset=utf-8 ",
         "Accept": "application/vnd.manictime.v3+json",
@@ -54,7 +54,7 @@ def get_activities_by_timeline(token: str, timeline_id:str, from_time:str, to_ti
        
        
 def get_timelines(token: str, username: str, timelines_filter: str = 'ManicTime/Tags'): 
-    get_timelines_url = f"http://{manic_server}/api/timelines"
+    get_timelines_url = f"{manic_server}/api/timelines"
     timeline_headers = {
         "Content-Type": "application/vnd.manictime.v3+json; charset=utf-8 ",
         "Accept": "application/vnd.manictime.v3+json",
@@ -66,7 +66,7 @@ def get_timelines(token: str, username: str, timelines_filter: str = 'ManicTime/
        
 def authenticate_in_manictime() -> str:
     auth_data = {"grant_type": "password", "username": username, "password": password}
-    token_endpoint = f"http://{manic_server}/api/token"
+    token_endpoint = f"{manic_server}/api/token"
     auth_headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         "Accept": "application/vnd.manictime.v3+json",

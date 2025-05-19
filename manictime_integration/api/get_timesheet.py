@@ -9,11 +9,7 @@ from frappe import (
 from frappe.integrations.utils import make_get_request, make_post_request
 from datetime import datetime
 from itertools import groupby
-
-
-manic_server = "192.168.56.101:8080"
-username = "erpbot@example.com"  # how to env
-password = "erpbot12"
+from manictime_integration.config.manictime import (manic_server, username, password)
 
 
 def get_timesheets_from_manictime():
@@ -76,7 +72,7 @@ def get_timesheets_from_manictime():
 
 def authenticate_in_manictime() -> str:
     auth_data = {"grant_type": "password", "username": username, "password": password}
-    token_endpoint = f"http://{manic_server}/api/token"
+    token_endpoint = f"{manic_server}/api/token"
     auth_headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         "Accept": "application/vnd.manictime.v3+json",
@@ -91,7 +87,7 @@ def authenticate_in_manictime() -> str:
 def request_timelines_groupedby_employee(
     auth_token: str,
 ) -> List[tuple[str, List[object]]]:
-    timeline_endpoint = f"http://{manic_server}/api/timelines"
+    timeline_endpoint = f"{manic_server}/api/timelines"
     timeline_headers = {
         "Content-Type": "application/vnd.manictime.v3+json; charset=utf-8 ",
         "Accept": "application/vnd.manictime.v3+json",
