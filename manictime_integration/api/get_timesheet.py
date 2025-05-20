@@ -6,9 +6,9 @@ from frappe import (
     log,
     db,
 )
-from frappe.integrations.utils import make_get_request, make_post_request
 from datetime import datetime
 from itertools import groupby
+import requests
 from manictime_integration.config.manictime import manic_server, username, password
 
 
@@ -44,7 +44,7 @@ def get_timesheets_from_manictime():
                 activity_start = activity["activity_start"]
                 activity_end = activity["activity_end"]
 
-                doc = get_doc(
+                get_doc(
                     {
                         "doctype": "Timesheet",
                         "company": "Admin",
@@ -74,8 +74,10 @@ def authenticate_in_manictime() -> str:
         "Accept": "application/vnd.manictime.v3+json",
     }
 
-    token_response = make_post_request(token_endpoint, data=auth_data, headers=auth_headers)
-    return token_response["token"]
+    token_response = requests.post(token_endpoint, data=auth_data, headers=auth_headers, verify=False)
+    if token_response.status_code != 200:
+        raise Exception(f"Request failed with status {token_response.status_code}")
+    return token_response.get("token")
 
 
 def request_timelines_groupedby_employee(
@@ -87,10 +89,12 @@ def request_timelines_groupedby_employee(
         "Accept": "application/vnd.manictime.v3+json",
         "Authorization": f"Bearer {auth_token}",
     }
-    timeline_response = make_get_request(timeline_endpoint, headers=timeline_headers)
+    timeline_response = requests.get(timeline_endpoint, headers=timeline_headers, verify=False)
+    if timeline_response.status_code != 200:
+        raise Exception(f"Request failed with status {timeline_response.status_code}")
 
     timeline_groups = [
-        (i, list(d)) for i, d in groupby(timeline_response["timelines"], lambda t: t["owner"]["username"])
+        (i, list(d)) for i, d in groupby(timeline_response.get("timelines"), lambda t: t["owner"]["username"])
     ]
 
     return timeline_groups
@@ -104,12 +108,14 @@ def request_timeline_activities(auth_token: str, url: str) -> List[dict]:
     }
 
     not_valid_activities = frozenset(["Active", "Session lock", "Away", ""])
-    activities = make_get_request(url, headers=activities_header)
+    activities = requests.get(url, headers=activities_header, verify=False)
+    if activities.status_code != 200:
+        raise Exception(f"Request failed with status {activities.status_code}")
     activities_list: List[dict] = []
-    for activity in activities["entities"]:
+    for activity in activities.get("entities"):
         if (
-            (activity["entityType"] == "activity")
-            & ((name := activity["values"]["name"]) not in not_valid_activities)
+            (activity.get("entityType") == "activity")
+            & ((name := activity.get("values").get("name")) not in not_valid_activities)
             & (":erpnextimporter" in name)
         ):
             tags = name.split(", ")
@@ -118,10 +124,10 @@ def request_timeline_activities(auth_token: str, url: str) -> List[dict]:
             if billable:
                 tags.remove(":billable")
 
-            activity_start = datetime.fromisoformat(activity["values"]["timeInterval"]["start"])
+            activity_start = datetime.fromisoformat(activity.get("values").get("timeInterval").get("start"))
             activity_end = utils.add_to_date(
                 activity_start,
-                seconds=activity["values"]["timeInterval"]["duration"],
+                seconds=activity.get("values").get("timeInterval").get("duration"),
             )
             if len(tags) == 1:
                 tags[1] = tags[0]
