@@ -7,9 +7,9 @@ def create_activity_in_manictime(timeline_id: str, create_activity_dto):
     return post_activity_in_manictime(token, timeline_id, create_activity_dto)
 
 
-def update_activity_in_manictime(timeline_id: str, create_activity_dto):
+def update_activity_in_manictime(timeline_id: str, activity_id: int, create_activity_dto):
     token = authenticate_in_manictime()
-    return put_activity_in_manictime(token, timeline_id, create_activity_dto)
+    return put_activity_in_manictime(token, timeline_id, activity_id, create_activity_dto)
 
 
 def post_activity_in_manictime(token: str, timeline_id: str, new_activity_dto):
@@ -24,11 +24,11 @@ def post_activity_in_manictime(token: str, timeline_id: str, new_activity_dto):
     )
     if activities_response != 200:
         raise Exception(f"Request failed with status {activities_response.status_code}")
-    return activities_response  # process response
+    return activities_response  # FIXME process response
 
 
-def put_activity_in_manictime(token: str, timeline_id: str, new_activity_dto):
-    put_activties_url = f"{manic_server}/api/timelines/{timeline_id}/activities"
+def put_activity_in_manictime(token: str, timeline_id: str, activity_id: int, new_activity_dto):
+    put_activties_url = f"{manic_server}/api/timelines/{timeline_id}/activities/{activity_id}"
     put_activities_headers = {
         "Content-Type": "application/vnd.manictime.v3+json; charset=utf-8 ",
         "Accept": "application/vnd.manictime.v3+json",

@@ -39,5 +39,5 @@ def create_activity(timelineId: str, activity):
 
 
 @frappe.whitelist()
-def update_activity(timelineId: str, activity):
-    return update_activity_in_manictime(timelineId, activity)
+def update_activity(timelineId: str, activityId: int, activity):
+    return update_activity_in_manictime(timelineId, activityId, activity)
